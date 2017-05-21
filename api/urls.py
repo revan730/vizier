@@ -5,5 +5,6 @@ from .views import *
 
 urlpatterns = [
     url(r'screens/(?P<pk>[0-9]+)/$', ScreenDetail.as_view()),
+    url(r'screens/upload/$', ScreenUpload.as_view()),
     url(r'users/(?P<pk>[0-9]+)/$', UserDetail.as_view()),
 ]
