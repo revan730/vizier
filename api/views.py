@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponseForbidden, HttpResponseServerError
+from django.http import HttpResponseForbidden
+from django.utils.timezone import now
 from rest_framework import generics, authentication
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import FileUploadParser
 from .models import Screenshot
@@ -15,18 +17,20 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
 
 class ScreenUpload(APIView):
-    authentication_classes = (authentication.TokenAuthentication,)
+    authentication_classes = (authentication.BasicAuthentication,)
     parser_classes = (FileUploadParser,)
 
-    def get(self, request):
+    def get(self):
         return HttpResponseForbidden()
 
     def post(self, request):
-        if request.user.is_authenticated():
-            return HttpResponseServerError()
-            # TODO: Implement file upload
-        else:
-            return HttpResponseForbidden()
+        screen = Screenshot(raw=request.data['file'], user=request.user,
+                            upload_date=now())
+        screen.save()
+
+        serializer = ScreenDetailSerializer(screen)
+
+        return Response(serializer.data)
 
 
 

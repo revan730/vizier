@@ -7,3 +7,6 @@ class Screenshot(models.Model):
     user = models.ForeignKey(User)
     description = models.TextField(blank=True)
 
+    def __str__(self):
+        return '{} - {}'.format(self.user.username, self.raw.name)
+
